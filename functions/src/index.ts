@@ -14,10 +14,11 @@ interface CLOTHS_INDEX {
 let page: puppeteer.Page
 const scrapingUrl = 'https://tenki.jp/indexes/cloth_dried/3/15/4510/'
 
-export const helloWorld = functions
+export const sendClothsIndex = functions
   .region('asia-northeast1')
   .runWith({ memory: '1GB' })
-  .https.onRequest(async (_, response) => {
+  .pubsub.topic(functions.config().pubsub.topic)
+  .onPublish(async (message, context) => {
     if (!page) {
       const browser = await puppeteer.launch({
         args: [
@@ -67,7 +68,7 @@ export const helloWorld = functions
       throw new functions.https.HttpsError('internal', 'Scraping failed')
     }
 
-    const message = results.reduce((prev, curr, i) => {
+    const text = results.reduce((prev, curr, i) => {
       return (
         prev +
         `${i === 0 ? '【今日' : '【明日'}の洗濯指数】
@@ -81,13 +82,12 @@ export const helloWorld = functions
       )
     }, '')
 
-    const res = await axios.post(functions.config().slack.webhook_url, {
-      text: message
-    })
+    const res = await axios.post(functions.config().slack.webhook_url, { text })
+    // FIXME:適切なreturn
     if (res.status >= 200 && res.status < 300) {
       const data = res.data
-      response.send(data)
+      console.log(data)
     } else {
-      response.send(res.statusText)
+      console.error(res.statusText)
     }
   })
