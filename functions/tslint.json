@@ -1,4 +1,6 @@
 {
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "extends": ["tslint-config-prettier"],
   "rules": {
     // -- Strict errors --
     // These lint rules are likely always a good idea.
@@ -111,7 +113,15 @@
     "prefer-const": {"severity": "warning"},
 
     // Multi-line object literals and function calls should have a trailing comma. This helps avoid merge conflicts.
-    "trailing-comma": {"severity": "warning"}
+    "trailing-comma": {"severity": "warning"},
+
+    "prettier": [
+      true,
+      {
+        "singleQuote": true,
+        "semi": false
+      }
+    ]
   },
 
   "defaultSeverity": "error"
