@@ -13,37 +13,44 @@ interface CLOTHS_INDEX {
 
 let page: puppeteer.Page
 const scrapingUrl = 'https://tenki.jp/indexes/cloth_dried/3/15/4510/'
+const selector = '.indexes-weather-wrap'
+
+async function setUpPage() {
+  if (page) {
+    return
+  }
+
+  const browser = await puppeteer.launch({
+    args: [
+      '--disable-gpu',
+      '--disable-dev-shm-usage',
+      '--disable-setuid-sandbox',
+      '--no-first-run',
+      '--no-sandbox',
+      '--no-zygote',
+      '--single-process'
+    ]
+  })
+  page = await browser.newPage()
+  await page.setRequestInterception(true)
+  page.on('request', request => {
+    if (scrapingUrl === request.url()) {
+      request.continue().catch(err => console.error(err))
+    } else {
+      request.abort().catch(err => console.error(err))
+    }
+  })
+}
 
 export const sendClothsIndex = functions
   .region('asia-northeast1')
   .runWith({ memory: '1GB' })
   .pubsub.topic(functions.config().pubsub.topic)
   .onPublish(async (message, context) => {
-    if (!page) {
-      const browser = await puppeteer.launch({
-        args: [
-          '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--disable-setuid-sandbox',
-          '--no-first-run',
-          '--no-sandbox',
-          '--no-zygote',
-          '--single-process'
-        ]
-      })
-      page = await browser.newPage()
-      await page.setRequestInterception(true)
-      page.on('request', request => {
-        if (scrapingUrl === request.url()) {
-          request.continue().catch(err => console.error(err))
-        } else {
-          request.abort().catch(err => console.error(err))
-        }
-      })
-    }
+    await setUpPage()
     await page.goto(scrapingUrl)
-    await page.waitForSelector('.indexes-weather-wrap')
-    const results = await page.$$eval<CLOTHS_INDEX[]>('.indexes-weather-wrap', elements => {
+    await page.waitForSelector(selector)
+    const results = await page.$$eval<CLOTHS_INDEX[]>(selector, elements => {
       // FIXME:外に出したいが型推論の課題をクリアしないといけない
       const unwrap = <T>(nullable: T | null, defaultValue: T = {} as T): T => {
         return nullable === null ? defaultValue : nullable
