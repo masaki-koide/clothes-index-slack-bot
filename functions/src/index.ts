@@ -32,6 +32,14 @@ export const sendClothsIndex = functions
         ]
       })
       page = await browser.newPage()
+      await page.setRequestInterception(true)
+      page.on('request', request => {
+        if (scrapingUrl === request.url()) {
+          request.continue().catch(err => console.error(err))
+        } else {
+          request.abort().catch(err => console.error(err))
+        }
+      })
     }
     await page.goto(scrapingUrl)
     await page.waitForSelector('.indexes-weather-wrap')
