@@ -96,7 +96,7 @@ export const sendClothsIndex = functions
   
   `
       )
-    }, '')
+    }, '<!channel>\n')
 
     const res = await axios.post(functions.config().slack.webhook_url, { text })
     // FIXME:適切なreturn
