@@ -86,6 +86,7 @@ export const sendClothsIndex = functions
   最低気温:${curr.lowTemp}
   降水確率:${curr.precip}
   メッセージ:${curr.forecast}
+  
   `
       )
     }, '')
