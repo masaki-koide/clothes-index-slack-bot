@@ -25,6 +25,7 @@ describe('sendClothsIndexs', () => {
     expect(text).toContain('【今日の洗濯指数】')
     done()
     // TODO:Jestが正常に終了しない
+    // TODO:testディレクトリのデプロイ設定
   })
 
   afterEach(() => {
