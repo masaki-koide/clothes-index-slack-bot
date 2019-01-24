@@ -1672,6 +1672,7 @@ firebase-admin@~6.0.0:
 firebase-functions-test@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/firebase-functions-test/-/firebase-functions-test-0.1.6.tgz#4c880e927c87fad32d5c6377e17b2cab9eda10bf"
+  integrity sha512-sITLbQunI75gL690qFOq4mqxUEcdETEbY4HcLFawWVJC3PmlSFt81mhfZjJe45GJTt1+7xeowaHQx3jpnoPNpA==
   dependencies:
     "@types/lodash" "^4.14.104"
     lodash "^4.17.5"
